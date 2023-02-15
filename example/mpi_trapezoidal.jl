@@ -40,6 +40,7 @@ function main()
 
     rank = MPI.Comm_rank(MPI.COMM_WORLD)
     com_size = MPI.Comm_size(MPI.COMM_WORLD)
+    MPI.Barrier(MPI.COMM_WORLD)
 
     a, b, n = get_arguments(rank, com_size)
 
@@ -70,6 +71,9 @@ function main()
     if rank == 0
         @printf("With n = %d trapezoids, our estimate of the integral from %f to %f is %.12e (exact: %f)\n", n, a, b, total_int, F(b) - F(a))
     end
+
+    MPI.Barrier(MPI.COMM_WORLD)
+    return nothing
 end
 
 @record main() # warmup
