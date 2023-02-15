@@ -3,6 +3,11 @@ uuid = "0eb6d5be-9499-4b92-a3d2-b4957f471b2b"
 authors = ["Carsten Bauer <carsten.bauer@uni-paderborn.de> and contributors"]
 version = "0.1.0"
 
+[deps]
+Cassette = "7057c7e9-c182-5462-911a-8362d720325c"
+MPI = "da04e1cc-30fd-572f-bb4f-1f8673147195"
+MacroTools = "1914dd2f-81c6-5fcd-8719-6d5c9610ff09"
+
 [compat]
 julia = "1"
 
