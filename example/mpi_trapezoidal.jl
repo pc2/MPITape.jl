@@ -81,3 +81,4 @@ end
 
 sleep(MPI.Comm_rank(MPI.COMM_WORLD)) # delayed printing
 MPITape.print_tape()
+MPITape.save()
