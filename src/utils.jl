@@ -1,4 +1,7 @@
 function getrank(; comm = MPI.COMM_WORLD)
-    MPI.Initialized() || MPI.Init()
-    MPI.Comm_rank(comm)
+    if MYRANK[] == -1 # first time we run this
+        MPI.Initialized() || MPI.Init()
+        MYRANK[] = MPI.Comm_rank(comm)
+    end
+    return MYRANK[]
 end

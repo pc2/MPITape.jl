@@ -8,7 +8,7 @@ function get_arguments(rank, com_size)
         b = parse(Float64, get(ARGS, 2, "1.0"))
         n = parse(Int, get(ARGS, 3, "100000"))
 
-        for dest in 1:com_size-1
+        for dest in 1:(com_size - 1)
             MPI.Send(a, dest, 0, MPI.COMM_WORLD)
             MPI.Send(b, dest, 0, MPI.COMM_WORLD)
             MPI.Send(n, dest, 0, MPI.COMM_WORLD)
@@ -27,13 +27,12 @@ F(x) = x^3 / 3
 
 function integrate(left, right, count, len)
     estimate = (f(left) + f(right)) / 2.0
-    for i in 1:count-1
+    for i in 1:(count - 1)
         x = left + i * len
         estimate += f(x)
     end
     return estimate * len
 end
-
 
 function main()
     MPI.Init()
@@ -61,7 +60,7 @@ function main()
     else
         # Master: add up results
         total_int = local_int
-        for src in 1:com_size-1
+        for src in 1:(com_size - 1)
             worker_int, = MPI.Recv(Float64, src, 0, MPI.COMM_WORLD)
             total_int += worker_int
         end
@@ -69,7 +68,8 @@ function main()
 
     # Master: print result
     if rank == 0
-        @printf("With n = %d trapezoids, our estimate of the integral from %f to %f is %.12e (exact: %f)\n", n, a, b, total_int, F(b) - F(a))
+        @printf("With n = %d trapezoids, our estimate of the integral from %f to %f is %.12e (exact: %f)\n",
+                n, a, b, total_int, F(b)-F(a))
     end
 
     MPI.Barrier(MPI.COMM_WORLD)
@@ -79,6 +79,13 @@ end
 @record main() # warmup
 @record main() # actual recording
 
-sleep(MPI.Comm_rank(MPI.COMM_WORLD)) # delayed printing
+rank = MPI.Comm_rank(MPI.COMM_WORLD)
+sleep(rank) # delayed printing
 MPITape.print_tape()
 MPITape.save()
+
+MPI.Barrier(MPI.COMM_WORLD)
+if rank == 0 # Master
+    tape_combined = MPITape.read_combine()
+    MPITape.print_combined(tape_combined)
+end

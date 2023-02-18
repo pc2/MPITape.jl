@@ -1,40 +1,50 @@
+const COLORS = [:white, :yellow, :blue, :green, :red, :magenta, :cyan]
+
 _timestr(time) = @sprintf("%.2E", time)
-_funcstr(f) = rpad(f, 20)
 
-function _print_tape_func(::Any, mpievent)
-    tstr = _timestr(mpievent.t)
-    fstr = _funcstr(mpievent.f)
-    println("\t", fstr, "(Δt=", tstr, ")")
+function _print_tape_func(::Any, mpievent; showrank = false, prefix = "\t", color = :normal)
+    tstr = "(Δt=" * _timestr(mpievent.t) * ")"
+    fargsstr = _fargs_str(mpievent.f, mpievent)
+    fstr = rpad(string(mpievent.f) * fargsstr, 20)
+    rstr = showrank ? string(mpievent.rank, ": ") : ""
+    # println(prefix, rstr, fstr, tstr)
+    printstyled(prefix, rstr, fstr, tstr, "\n"; color)
 end
-function _print_tape_func(::Union{typeof(MPI.Send), typeof(MPI.send), typeof(MPI.Isend)},
-                          mpievent)
+_fargs_str(::Any, ::Any) = ""
+function _fargs_str(::Union{typeof(MPI.Send), typeof(MPI.send), typeof(MPI.Isend)},
+                    mpievent)
     src, dest = getsrcdest(mpievent)
-    if isnothing(dest) || isnothing(src)
-        fstr = _funcstr(mpievent.f)
-    else
-        fstr = _funcstr(string(mpievent.f) * " -> $dest")
+    if !isnothing(dest) && !isnothing(src)
+        return " -> $dest"
     end
-    tstr = _timestr(mpievent.t)
-    println("\t", fstr, "(Δt=", tstr, ")")
+    return ""
 end
-function _print_tape_func(::Union{typeof(MPI.Recv), typeof(MPI.Recv!), typeof(MPI.recv)},
-                          mpievent)
+function _fargs_str(::Union{typeof(MPI.Recv), typeof(MPI.Recv!), typeof(MPI.recv)},
+                    mpievent)
     src, dest = getsrcdest(mpievent)
-    if isnothing(dest) || isnothing(src)
-        fstr = _funcstr(mpievent.f)
-    else
-        fstr = _funcstr(string(mpievent.f) * " <- $src")
+    if !isnothing(dest) && !isnothing(src)
+        return " <- $src"
     end
-    tstr = _timestr(mpievent.t)
-    println("\t", fstr, "(Δt=", tstr, ")")
+    return ""
 end
 
-function print_tape()
+function print_tape(; showrank = false)
     rank = getrank()
     println("Rank: ", rank)
     for mpievent in unsafe_gettape()
-        _print_tape_func(mpievent.f, mpievent)
+        _print_tape_func(mpievent.f, mpievent; showrank)
     end
     println()
+    return nothing
+end
+
+function print_combined(tape = read_combine(); color = true)
+    nranks = length(unique(ev.rank for ev in tape))
+    printstyled("Combined Tape of ", nranks, " MPI Ranks: \n"; color = :white, bold = true)
+    usecolors = color && nranks <= length(COLORS)
+    for mpievent in tape
+        _print_tape_func(mpievent.f, mpievent; showrank = true,
+                         color = usecolors ? COLORS[mpievent.rank + 1] : :normal)
+    end
     return nothing
 end
