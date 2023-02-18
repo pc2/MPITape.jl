@@ -74,3 +74,5 @@ Rank: 4
     Barrier             (Δt=9.63E-05)
 ```
 
+
+![](https://raw.githubusercontent.com/carstenbauer/MPITape.jl/main/example/colored_output_combined.png)
