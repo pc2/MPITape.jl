@@ -11,6 +11,7 @@ end
 @record your_mpi_code()
 MPITape.print_tape()
 # MPITape.save()
+# MPITape.print_combined() # run only on single process, e.g. master
 ```
 
 See `example/` for an actual example which leads to outputs like this:
