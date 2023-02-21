@@ -25,7 +25,7 @@ function MPIEventNeighbors(src::Int, dst::Vector{Int})
     MPIEventNeighbors([src],dst)
 end
 
-function get_edges(tape::Array{MPIEvent})
+function get_edges(tape::Array{MPIEvent}; check=true)
     # Data structure containing communication edges
     edges = Tuple{MPIEvent, MPIEvent}[]
     # temporary data to keep track of left communication pairs
@@ -52,20 +52,21 @@ function get_edges(tape::Array{MPIEvent})
                         deleteat!(l_recv.open_srcs,findfirst(x->x==e.rank, l_recv.open_srcs))
                         append!(found_dsts, d)
                         push!(edges, (e, recvevent))
+                        break
                     end
                 end
             end
             deleteat!(l.open_dst,findall(x->any(x==d for d in found_dsts), l.open_dst))
             # check for errors in graph
             if !isempty(l.open_dst)
-                error("Not all destinations found for $(e): $(l.open_dst)")
+                check && error("Not all destinations found for $(e): $(l.open_dst)")
             end
             deleteat!(l.open_srcs,findfirst(x->x==e.rank, l.open_srcs))
         end
     end
     for (ol, e) in zip(open_links, tape)
         if !isempty(ol.open_srcs)
-            error("Not all transmissions are linked correctly: Sources left: $(ol.open_srcs) $(e)")
+            check && error("Not all transmissions are linked correctly: Sources left: $(ol.open_srcs) $(e)")
         end
     end
     return edges
