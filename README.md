@@ -77,3 +77,6 @@ Rank: 4
 
 
 ![](https://raw.githubusercontent.com/carstenbauer/MPITape.jl/main/example/colored_output_combined.png)
+
+
+![](https://raw.githubusercontent.com/carstenbauer/MPITape.jl/main/example/communication_graph.png)
