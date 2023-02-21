@@ -18,6 +18,7 @@ include("fileio.jl")
 const TIME_START = Ref(0.0)
 const TAPE = MPIEvent[]
 const MYRANK = Ref(-1)
+const GLOBAL_COMM_SIZE = Ref(-1)
 
 export @record
 
