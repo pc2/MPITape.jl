@@ -1,15 +1,29 @@
 
+function srcdest_to_rankarray(srcdest, rank)
+    if srcdest in ["all", "each", "some"]
+        return vcat(collect(0:rank-1),collect(rank+1:getcommsize()-1))
+    end
+    if typeof(srcdest) == Int
+        return [srcdest]
+    end
+    if srcdest == nothing
+        return Int[]
+    end
+    return srcdest
+end
+
 mutable struct MPIEventNeighbors
     open_srcs::Vector{Int}
     open_dst::Vector{Int}
 end
 
 function MPIEventNeighbors(ev::MPIEvent)
-    opensrcs = Int[]
-    opendsts= Int[]
-    if hasmethod(getsrcdest, Tuple{typeof(ev.f), MPIEvent})
-        opensrcs, opendsts = getsrcdest(ev)
+    srcdest = getsrcdest(ev)
+    if srcdest == nothing
+        srcdest = (src = nothing, dest = nothing)
     end
+    opensrcs = srcdest_to_rankarray(srcdest[:src], ev.rank)
+    opendsts = srcdest_to_rankarray(srcdest[:dest], ev.rank)
     MPIEventNeighbors(opensrcs, opendsts)
 end
 
@@ -36,6 +50,7 @@ function get_edges(tape::Array{MPIEvent}; check=true)
     end
     # Start finding communication pairs for global list of MPI calls
     for (e, l) in zip(tape, open_links)
+        verbose() && println("Event: $(e) $(l.open_srcs) $(l.open_dst)")
         # If the current call is a sending call, search for matching receive calls
         if any(s == e.rank for s in l.open_srcs)
             verbose() && println("Send call found! $(e) $(l.open_srcs) $(l.open_dst)")
