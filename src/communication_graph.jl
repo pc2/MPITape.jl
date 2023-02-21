@@ -1,9 +1,9 @@
 
 function srcdest_to_rankarray(srcdest, rank)
     if srcdest in ["all", "each", "some"]
-        return vcat(collect(0:rank-1),collect(rank+1:getcommsize()-1))
+        return vcat(collect(0:getcommsize()-1))
     end
-    if typeof(srcdest) == Int
+    if typeof(srcdest) <: Integer
         return [srcdest]
     end
     if srcdest == nothing
@@ -27,18 +27,6 @@ function MPIEventNeighbors(ev::MPIEvent)
     MPIEventNeighbors(opensrcs, opendsts)
 end
 
-function MPIEventNeighbors(src::Int, dst::Int)
-    MPIEventNeighbors([src],[dst])
-end
-
-function MPIEventNeighbors(src::Vector{Int}, dst::Int)
-    MPIEventNeighbors(src,[dst])
-end
-
-function MPIEventNeighbors(src::Int, dst::Vector{Int})
-    MPIEventNeighbors([src],dst)
-end
-
 function get_edges(tape::Array{MPIEvent}; check=true)
     # Data structure containing communication edges
     edges = Tuple{MPIEvent, MPIEvent}[]
@@ -57,6 +45,11 @@ function get_edges(tape::Array{MPIEvent}; check=true)
             # for every destination (if multiple)
             found_dsts = Int[]
             for d in l.open_dst
+                if d == e.rank
+                    push!(found_dsts, d)
+                    # Skip connections to self in graph
+                    continue
+                end
                 for (recvevent, l_recv) in zip(tape, open_links)
                     verbose() && println("Check: $recvevent")
                     # identify receive call and matching signature
@@ -65,7 +58,7 @@ function get_edges(tape::Array{MPIEvent}; check=true)
                             gettag(e) == gettag(recvevent)
                         verbose() && println("Matched $(e) and $(recvevent)")
                         deleteat!(l_recv.open_srcs,findfirst(x->x==e.rank, l_recv.open_srcs))
-                        append!(found_dsts, d)
+                        push!(found_dsts, d)
                         push!(edges, (e, recvevent))
                         break
                     end
