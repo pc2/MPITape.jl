@@ -1,31 +1,62 @@
 default_fprefix() = "tape_rank"
-default_fname() = default_fprefix() * "$(getrank()).jld2"
+default_fname() = default_fprefix() * string(getrank())
+default_fext() = ".bson"
+default_fname_full() = default_fname() * default_fext()
 
-function save(fname = default_fname())
-    JLD2.save(fname, "tape", unsafe_gettape())
+function save(fname = default_fname_full())
+    BSON.bson(fname, Dict(:tape => unsafe_gettape()))
     return nothing
 end
 
-function _set_tape(new_tape)
-    resize!(unsafe_gettape(), length(new_tape))
-    copyto!(unsafe_gettape(), new_tape)
+function read(fname = default_fname_full())
+    tape_from_file = BSON.load(fname)[:tape]
+    return tape_from_file
+end
+
+function load(fname = default_fname_full())
+    unsafe_settape(read(fname))
     return nothing
 end
 
-function load(fname = default_fname())
-    tape_from_file = JLD2.load(fname, "tape")
-    _set_tape(tape_from_file)
-    return gettape()
-end
-
-function read_combine(dir = pwd(); prefix = default_fprefix())
-    filenames = filter(x -> startswith(x, prefix) && endswith(x, ".jld2"), readdir(dir))
-    tape_combined = MPIEvent[]
+"""
+$(SIGNATURES)
+Reads all tapes from disk and merges them into a single "merged tape".
+"""
+function readall_and_merge(dir = pwd(); prefix = default_fprefix())
+    filenames = filter(x -> startswith(x, prefix) && endswith(x, default_fext()),
+                       readdir(dir))
+    tape_merged = MPIEvent[]
     for fn in filenames
         f = joinpath(dir, fn)
-        tape_rank = JLD2.load(f, "tape")
-        append!(tape_combined, tape_rank)
+        append!(tape_merged, read(f))
     end
-    sort!(tape_combined; by = x -> x.t)
-    return tape_combined
+    sort!(tape_merged; by = x -> x.t)
+    return tape_merged
 end
+
+"""
+To be called on all MPI ranks. Saves all tapes to disk and then reads and merges them on
+the master (rank 0). Returns the merged tape on the master and `nothing` on all other ranks.
+"""
+function merge()
+    save()
+    MPI.Barrier(MPI.COMM_WORLD)
+    tape_merged = getrank() == 0 ? readall_and_merge() : nothing
+    MPI.Barrier(MPI.COMM_WORLD)
+    return tape_merged
+end
+
+# # Attempt to reduce tapes to master
+# # (Doesn't work though because tape isn't isbitstype...)
+# function merge()
+#     mpi_check_not_finalized()
+#     mpi_maybeinit()
+#     MPI.Barrier(MPI.COMM_WORLD)
+#     tape_merged = MPI.Reduce(MPITape.unsafe_gettape(), vcat, MPI.COMM_WORLD)
+#     if getrank() == 0
+#         # unsafe_settape(tape_merged)
+#         return tape_merged
+#     else
+#         return nothing
+#     end
+# end

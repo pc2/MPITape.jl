@@ -1,87 +1,42 @@
-struct MPIEvent{F, I}
-    f::F            # function
-    args::I         # arguments or other extra information
-    t::Float64      # start-time
-    t_end::Float64  # end time
-    rank::Int64     # ranks
+struct MPIEvent{S, A, D}
+    rank::Int64         # ranks
+    f::S                # function
+    argtypes::A         # arguments or other extra information
+    args_subset::D      # subset of argument values
+    t_start::Float64    # start time
+    t_end::Float64      # end time
 end
-
-functype(mpievent::MPIEvent{F, I}) where {F, I} = F
 
 function Base.show(io::IO, ::MIME"text/plain", ev::MPIEvent)
     summary(io, ev)
     println(io)
     println(io, "├ Rank: ", ev.rank)
     println(io, "├ Function: ", ev.f)
-    println(io, "├ Args: ", isempty(ev.args) ? "none" : ev.args)
-    println(io, "└ Start Time: ", ev.t)
-    print(io, "└ End Time: ", ev.t_end)
+    println(io, "├ Argument Types: ", ev.argtypes)
+    println(io, "├ Arguments (subset): ", isempty(ev.args_subset) ? "none" : ev.args_subset)
+    print(io, "└ Time: ", ev.t_start, " - ", ev.t_end)
 end
 
 function Base.show(io::IO, ev::MPIEvent)
-    print(io, "MPITape.MPIEvent($(ev.f), ..., $(ev.t), $(ev.t_end), $(ev.rank))")
+    print(io, "MPITape.MPIEvent($(ev.rank), $(ev.f), ..., $(ev.t_start), $(ev.t_end))")
 end
 
-getsrcdest(ev::MPIEvent) = getsrcdest(ev.f, ev)
-function getsrcdest(::Union{typeof(MPI.Send), typeof(MPI.send), typeof(MPI.Isend)},
-                    mpievent)
-    src = mpievent.rank
-    dest = nothing
-    if mpievent.args isa Tuple
-        dest = mpievent.args[2]
-    elseif mpievent
-        dest = mpievent.args[:dest]
+function getsrcdest(ev::MPIEvent)
+    if isempty(ev.args_subset)
+        return nothing
     end
-    return (; src, dest)
-end
-function getsrcdest(::Union{typeof(MPI.Recv), typeof(MPI.Recv!)},
-                    mpievent)
-    dest = mpievent.rank
-    src = nothing
-    if mpievent.args isa Tuple
-        src = mpievent.args[2]
-    elseif mpievent
-        src = mpievent.args[:source]
+    if haskey(ev.args_subset, :src) && haskey(ev.args_subset, :dest)
+        return (; src = ev.args_subset[:src], dest = ev.args_subset[:dest])
     end
-    return (; src, dest)
+    return nothing
 end
 
-function getsrcdest(::Union{typeof(MPI.Bcast!), typeof(MPI.Bcast)},
-    mpievent)
-src = nothing
-if mpievent.args isa Tuple
-src = mpievent.args[2]
-elseif mpievent
-src = mpievent.args[:root]
-end
-dest = vcat(collect(0:src-1),collect(src+1:getcommsize()-1))
-return (; src, dest)
-end
-
-gettag(ev::MPIEvent) = gettag(ev.f, ev)
-function gettag(::Union{typeof(MPI.Send), typeof(MPI.send), typeof(MPI.Isend)},
-    mpievent)
-if mpievent.args isa Tuple
-return mpievent.args[3]
-elseif mpievent
-return mpievent.args[:tag]
-end 
-end
-
-function gettag(::Union{typeof(MPI.Recv), typeof(MPI.Recv!)},
-            mpievent)
-    if mpievent.args isa Tuple
-        return mpievent.args[3]
-    elseif mpievent
-        return mpievent.args[:tag]
-    end 
-end
-
-function gettag(::Union{typeof(MPI.Bcast!), typeof(MPI.Bcast)},
-            mpievent)
-    if mpievent.args isa Tuple
-        return mpievent.args[3]
-    elseif mpievent
-        return mpievent.args[:tag]
-    end 
-end       
+function gettag(ev::MPIEvent)
+    if isempty(ev.args_subset)
+        return nothing
+    end
+    if haskey(ev.args_subset, :tag)
+        return ev.args_subset[:tag]
+    end
+    return nothing
+end   
