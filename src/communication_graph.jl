@@ -1,12 +1,12 @@
 
-function srcdest_to_rankarray(srcdest, rank)
+function srcdest_to_rankarray(srcdest)
     if srcdest in ["all", "each", "some"]
-        return vcat(collect(0:getcommsize()-1))
+        return collect(0:getcommsize()-1)
     end
     if typeof(srcdest) <: Integer
         return [srcdest]
     end
-    if srcdest == nothing
+    if isnothing(srcdest)
         return Int[]
     end
     return srcdest
@@ -19,19 +19,19 @@ end
 
 function MPIEventNeighbors(ev::MPIEvent)
     srcdest = getsrcdest(ev)
-    if srcdest == nothing
+    if isnothing(srcdest)
         srcdest = (src = nothing, dest = nothing)
     end
-    opensrcs = srcdest_to_rankarray(srcdest[:src], ev.rank)
-    opendsts = srcdest_to_rankarray(srcdest[:dest], ev.rank)
+    opensrcs = srcdest_to_rankarray(srcdest[:src])
+    opendests = srcdest_to_rankarray(srcdest[:dest])
     # Delete rank from recvs or sends it if is root!
-    if length(opensrcs) == 1 && (opensrcs[1] in opendsts)
-        deleteat!(opendsts, findfirst(x->x==opensrcs[1], opendsts))
+    if length(opensrcs) == 1 && (opensrcs[1] in opendests)
+        deleteat!(opendests, findfirst(isequal(opensrcs[1]), opendests))
     end
-    if length(opendsts) == 1 && (opendsts[1] in opensrcs)
-        deleteat!(opensrcs, findfirst(x->x==opendsts[1], opensrcs))
+    if length(opendests) == 1 && (opendests[1] in opensrcs)
+        deleteat!(opensrcs, findfirst(isequal(opendests[1]), opensrcs))
     end 
-    MPIEventNeighbors(opensrcs, opendsts)
+    MPIEventNeighbors(opensrcs, opendests)
 end
 
 function get_edges(tape::Array{MPIEvent}; check=true)
