@@ -11,7 +11,8 @@ reset() = empty!(unsafe_gettape())
 
 function record(f, args...)
     MPITape.reset()
-    MPI.Initialized() && MPI.Barrier(MPI.COMM_WORLD)
+    mpi_maybeinit()
+    MPI.Barrier(MPI.COMM_WORLD)
     TIME_START[] = MPI.Wtime()
     result = Cassette.overdub(MPITapeCtx(), f, args...)
     return result
