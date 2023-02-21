@@ -1,4 +1,5 @@
 using Plots
+using Kroki
 
 function plot_edges(edges::Array{Tuple{MPIEvent, MPIEvent}})
     for (src, dst) in edges
@@ -27,3 +28,17 @@ function plot_merged(tape::Array{MPIEvent}; palette=palette(:Accent_8))
     Plots.ylabel!("MPI Rank")
     return plot!()
 end
+
+function generate_plantuml(edges)
+    str_edge = ""
+    sorted_edges = sort(edges; by = e -> max(e[1].t_end, e[2].t_end))
+    for (s, d) in sorted_edges
+        str_edge *= "Rank_$(s.rank) -> Rank_$(d.rank) : $(string(s.f))\n"
+    end
+    return str_edge
+end
+
+function plot_sequence_merged(tape)
+    edges = get_edges(tape)
+    return plantuml"$(generate_plantuml(edges))"
+end   

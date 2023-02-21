@@ -25,10 +25,10 @@ function MPIEventNeighbors(ev::MPIEvent)
     opensrcs = srcdest_to_rankarray(srcdest[:src], ev.rank)
     opendsts = srcdest_to_rankarray(srcdest[:dest], ev.rank)
     # Delete rank from recvs or sends it if is root!
-    if length(opensrcs) == 1
+    if length(opensrcs) == 1 && (opensrcs[1] in opendsts)
         deleteat!(opendsts, findfirst(x->x==opensrcs[1], opendsts))
     end
-    if length(opendsts) == 1
+    if length(opendsts) == 1 && (opendsts[1] in opensrcs)
         deleteat!(opensrcs, findfirst(x->x==opendsts[1], opensrcs))
     end 
     MPIEventNeighbors(opensrcs, opendsts)
