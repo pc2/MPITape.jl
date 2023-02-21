@@ -45,11 +45,7 @@ function get_edges(tape::Array{MPIEvent}; check=true)
     # Data structure containing communication edges
     edges = Tuple{MPIEvent, MPIEvent}[]
     # temporary data to keep track of left communication pairs
-    open_links = MPIEventNeighbors[]
-    # Construct data structure for linked list of MPI calls
-    for e in tape
-        push!(open_links, MPIEventNeighbors(e))
-    end
+    open_links = MPIEventNeighbors[MPIEventNeighbors(e) for e in tape]
     # Start finding communication pairs for global list of MPI calls
     for (e, l) in zip(tape, open_links)
         verbose() && println("Event: $(e) $(l.open_srcs) $(l.open_dst)")
