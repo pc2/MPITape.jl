@@ -45,3 +45,16 @@ function getsrcdest(::Union{typeof(MPI.Recv), typeof(MPI.Recv!)},
     end
     return (; src, dest)
 end
+
+function getsrcdest(::Union{typeof(MPI.Bcast!), typeof(MPI.Bcast)},
+    mpievent)
+src = nothing
+if mpievent.args isa Tuple
+src = mpievent.args[2]
+elseif mpievent
+src = mpievent.args[:root]
+end
+dest = vcat(collect(0:src-1),collect(src+1:getcommsize()-1))
+return (; src, dest)
+end
+
