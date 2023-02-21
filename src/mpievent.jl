@@ -58,3 +58,30 @@ dest = vcat(collect(0:src-1),collect(src+1:getcommsize()-1))
 return (; src, dest)
 end
 
+gettag(ev::MPIEvent) = gettag(ev.f, ev)
+function gettag(::Union{typeof(MPI.Send), typeof(MPI.send), typeof(MPI.Isend)},
+    mpievent)
+if mpievent.args isa Tuple
+return mpievent.args[3]
+elseif mpievent
+return mpievent.args[:tag]
+end 
+end
+
+function gettag(::Union{typeof(MPI.Recv), typeof(MPI.Recv!)},
+            mpievent)
+    if mpievent.args isa Tuple
+        return mpievent.args[3]
+    elseif mpievent
+        return mpievent.args[:tag]
+    end 
+end
+
+function gettag(::Union{typeof(MPI.Bcast!), typeof(MPI.Bcast)},
+            mpievent)
+    if mpievent.args isa Tuple
+        return mpievent.args[3]
+    elseif mpievent
+        return mpievent.args[:tag]
+    end 
+end       
