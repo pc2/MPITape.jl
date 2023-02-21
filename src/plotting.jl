@@ -13,7 +13,7 @@ function event_to_rect(ev::MPIEvent; color=:blue)
             label="")
 end
 
-function plot_merged(tape::Array{MPIEvent}; palette=palette(:Accent_8))
+function plot_merged(tape::Array{MPIEvent}; palette=palette(:Accent_8), fname="gantt.png")
     plot()
     unique_calls = unique([ev.f for ev in tape])
     for mpievent in tape
@@ -26,7 +26,7 @@ function plot_merged(tape::Array{MPIEvent}; palette=palette(:Accent_8))
     plot_edges(edges)
     Plots.xlabel!("Execution time [s]")
     Plots.ylabel!("MPI Rank")
-    return plot!()
+    Plots.savefig(fname)
 end
 
 function generate_plantuml(edges)
