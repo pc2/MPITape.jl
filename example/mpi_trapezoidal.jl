@@ -86,7 +86,7 @@ MPITape.print_mytape()
 tape_merged = MPITape.merge()
 if rank == 0 # Master
     MPITape.print_merged(tape_merged)
-    display(MPITape.plot_combined(tape_combined))
+    display(MPITape.plot_merged(tape_merged))
     readline()
 end
 

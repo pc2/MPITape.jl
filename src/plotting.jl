@@ -12,7 +12,7 @@ function event_to_rect(ev::MPIEvent; color=:blue)
             label="")
 end
 
-function plot_combined(tape = read_combine(); palette=palette(:Accent_8))
+function plot_merged(tape::Array{MPIEvent}; palette=palette(:Accent_8))
     plot()
     unique_calls = unique([ev.f for ev in tape])
     for mpievent in tape
