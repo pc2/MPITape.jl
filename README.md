@@ -9,9 +9,15 @@ function your_mpi_code()
 end
 
 @record your_mpi_code()
-MPITape.print_tape()
-# MPITape.save()
-# MPITape.print_combined() # run only on single process, e.g. master
+
+rank = MPI.Comm_rank(MPI.COMM_WORLD)
+sleep(rank) # delayed printing
+MPITape.print_mytape()
+
+tape_merged = MPITape.merge()
+if rank == 0 # Master
+    MPITape.print_merged(tape_merged)
+end
 ```
 
 See `example/` for an actual example which leads to outputs like this:
