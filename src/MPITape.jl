@@ -15,6 +15,7 @@ include("printing.jl")
 include("api.jl")
 include("fileio.jl")
 include("communication_graph.jl")
+include("plotting.jl")
 
 const TIME_START = Ref(0.0)
 const TAPE = MPIEvent[]
