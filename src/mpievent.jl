@@ -25,7 +25,7 @@ end
 getsrcdest(ev::MPIEvent) = getsrcdest(ev.f, ev)
 function getsrcdest(::Union{typeof(MPI.Send), typeof(MPI.send), typeof(MPI.Isend)},
                     mpievent)
-    src = getrank()
+    src = mpievent.rank
     dest = nothing
     if mpievent.args isa Tuple
         dest = mpievent.args[2]
@@ -36,12 +36,12 @@ function getsrcdest(::Union{typeof(MPI.Send), typeof(MPI.send), typeof(MPI.Isend
 end
 function getsrcdest(::Union{typeof(MPI.Recv), typeof(MPI.Recv!)},
                     mpievent)
-    dest = getrank()
+    dest = mpievent.rank
     src = nothing
     if mpievent.args isa Tuple
         src = mpievent.args[2]
     elseif mpievent
-        src = mpievent.args[:dest]
+        src = mpievent.args[:source]
     end
     return (; src, dest)
 end
