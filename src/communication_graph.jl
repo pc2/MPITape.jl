@@ -31,6 +31,13 @@ function MPIEventNeighbors(ev::MPIEvent)
     if length(opendests) == 1 && (opendests[1] in opensrcs)
         deleteat!(opensrcs, findfirst(isequal(opendests[1]), opensrcs))
     end 
+    # remove other ranks on own communication side
+    if ev.rank in opendests
+        opendests = [ev.rank]
+    end
+    if ev.rank in opensrcs
+        opensrcs = [ev.rank]
+    end
     MPIEventNeighbors(opensrcs, opendests)
 end
 
