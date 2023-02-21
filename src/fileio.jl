@@ -30,7 +30,7 @@ function readall_and_merge(dir = pwd(); prefix = default_fprefix())
         f = joinpath(dir, fn)
         append!(tape_merged, read(f))
     end
-    sort!(tape_merged; by = x -> x.t)
+    sort!(tape_merged; by = x -> x.t_start)
     return tape_merged
 end
 

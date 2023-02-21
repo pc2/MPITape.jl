@@ -5,7 +5,7 @@ _timestr(time) = @sprintf("%.2E", time)
 drop_mpiprefix(f::AbstractString) = replace(f, "MPI_" => "")
 
 function _print_tape_func(::Any, mpievent; showrank = false, prefix = "\t", color = :normal)
-    tstr = "(Δt=" * _timestr(mpievent.t) * ")"
+    tstr = "(Δt=" * _timestr(mpievent.t_start) * ")"
     fargsstr = _fargs_str(mpievent)
     fstr = rpad(drop_mpiprefix(mpievent.f) * fargsstr, 20)
     rstr = showrank ? string(mpievent.rank, ": ") : ""
