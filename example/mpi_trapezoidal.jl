@@ -88,4 +88,6 @@ MPI.Barrier(MPI.COMM_WORLD)
 if rank == 0 # Master
     tape_combined = MPITape.read_combine()
     MPITape.print_combined(tape_combined)
+    display(MPITape.plot_combined(tape_combined))
+    readline()
 end
