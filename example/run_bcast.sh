@@ -1,1 +1,0 @@
-mpiexecjl --project -n 5 julia mpi_plot.jl 
