@@ -12,7 +12,7 @@ function srcdest_to_rankarray(srcdest, rank)
     return srcdest
 end
 
-mutable struct MPIEventNeighbors
+struct MPIEventNeighbors
     open_srcs::Vector{Int}
     open_dst::Vector{Int}
 end
