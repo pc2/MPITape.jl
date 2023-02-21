@@ -7,7 +7,7 @@ function plot_edges(edges::Array{Tuple{MPIEvent, MPIEvent}})
 end
 
 function event_to_rect(ev::MPIEvent; color=:blue)
-    plot!(Shape([ev.t, ev.t_end, ev.t_end, ev.t], 
+    plot!(Shape([ev.t_start, ev.t_end, ev.t_end, ev.t_start], 
             [ev.rank - 0.25, ev.rank - 0.25, ev.rank + 0.25, ev.rank + 0.25]), color=color,
             label="")
 end
