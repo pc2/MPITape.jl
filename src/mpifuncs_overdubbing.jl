@@ -57,9 +57,11 @@ for mpifunc in MPIFunctions
              function Cassette.overdub(ctx::MPITapeCtx, f::typeof($mpifunc), args...)
                  argtypes = typeof.(args)
                  verbose() && println("OVERDUBBING: ", f, argtypes)
-                 push!(TAPE, MPIEvent(f, args, MPI.Wtime() - TIME_START[], getrank()))
+                 start_time = MPI.Wtime() - TIME_START[]
                  # return Cassette.recurse(ctx, f, args...)
-                 return f(args...)
+                 ret = f(args...)
+                 push!(TAPE, MPIEvent(f, args, start_time, MPI.Wtime() - TIME_START[], getrank()))
+                 return ret
              end
          end)
 end
