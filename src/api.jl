@@ -1,6 +1,12 @@
 verbose() = false
 gettape() = copy(TAPE)
 unsafe_gettape() = TAPE
+function unsafe_settape(tape::AbstractVector{<:MPIEvent})
+    resize!(unsafe_gettape(), length(new_tape))
+    copyto!(unsafe_gettape(), new_tape)
+    return unsafe_gettape()
+end
+
 reset() = empty!(unsafe_gettape())
 
 function record(f, args...)

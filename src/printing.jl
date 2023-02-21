@@ -2,33 +2,50 @@ const COLORS = [:white, :yellow, :blue, :green, :red, :magenta, :cyan]
 
 _timestr(time) = @sprintf("%.2E", time)
 
+drop_mpiprefix(f::AbstractString) = replace(f, "MPI_" => "")
+
 function _print_tape_func(::Any, mpievent; showrank = false, prefix = "\t", color = :normal)
     tstr = "(Δt=" * _timestr(mpievent.t) * ")"
-    fargsstr = _fargs_str(mpievent.f, mpievent)
-    fstr = rpad(string(mpievent.f) * fargsstr, 20)
+    fargsstr = _fargs_str(mpievent)
+    fstr = rpad(drop_mpiprefix(mpievent.f) * fargsstr, 20)
     rstr = showrank ? string(mpievent.rank, ": ") : ""
     # println(prefix, rstr, fstr, tstr)
     printstyled(prefix, rstr, fstr, tstr, "\n"; color)
 end
-_fargs_str(::Any, ::Any) = ""
-function _fargs_str(::Union{typeof(MPI.Send), typeof(MPI.send), typeof(MPI.Isend)},
-                    mpievent)
-    src, dest = getsrcdest(mpievent)
-    if !isnothing(dest) && !isnothing(src)
-        return " -> $dest"
-    end
-    return ""
-end
-function _fargs_str(::Union{typeof(MPI.Recv), typeof(MPI.Recv!), typeof(MPI.recv)},
-                    mpievent)
-    src, dest = getsrcdest(mpievent)
-    if !isnothing(dest) && !isnothing(src)
-        return " <- $src"
+
+ispartof(rank, g::Integer) = rank == g
+ispartof(rank, s::AbstractString) = s == "all"
+
+matches(rank, g::Integer) = rank == g
+matches(rank, s::AbstractString) = false
+
+function _fargs_str(ev::Any)
+    rank = ev.rank
+    args = ev.args_subset
+    if !isempty(args) && haskey(args, :src) && haskey(args, :dest)
+        if matches(rank, args[:src])
+            return " -> $(args[:dest])"
+        end
+        if matches(rank, args[:dest])
+            return " <- $(args[:src])"
+        end
+        if ispartof(rank, args[:src])
+            return " -> $(args[:dest])"
+        end
+        if ispartof(rank, args[:dest])
+            return " <- $(args[:src])"
+        end
+        # src != rank && dest != rank
+        return ", $(args[:src]) -> $(args[:dest])"
     end
     return ""
 end
 
-function print_tape(; showrank = false)
+"""
+$(SIGNATURES)
+Print the local tape (of the calling MPI rank).
+"""
+function print_mytape(; showrank = false)
     rank = getrank()
     println("Rank: ", rank)
     for mpievent in unsafe_gettape()
@@ -38,9 +55,15 @@ function print_tape(; showrank = false)
     return nothing
 end
 
-function print_combined(tape = read_combine(); color = true)
+"""
+$(SIGNATURES)
+Prints the given tape with the assumption that it contains events from multiple MPI ranks.
+Typically, the input should be the result of `MPITape.merge()`,
+`MPITape.readall_and_merge()`, or similar.
+"""
+function print_merged(tape; color = true)
     nranks = length(unique(ev.rank for ev in tape))
-    printstyled("Combined Tape of ", nranks, " MPI Ranks: \n"; color = :white, bold = true)
+    printstyled("Merged Tape of ", nranks, " MPI Ranks: \n"; color = :white, bold = true)
     usecolors = color && nranks <= length(COLORS)
     for mpievent in tape
         _print_tape_func(mpievent.f, mpievent; showrank = true,

@@ -4,14 +4,19 @@ authors = ["Carsten Bauer <carsten.bauer@uni-paderborn.de> and contributors"]
 version = "0.1.0"
 
 [deps]
+BSON = "fbb218c0-5317-5bc6-957e-2ee96dd4b1f0"
 Cassette = "7057c7e9-c182-5462-911a-8362d720325c"
-JLD2 = "033835bb-8acc-5ee8-8aae-3f567f8a3819"
+DocStringExtensions = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
 MPI = "da04e1cc-30fd-572f-bb4f-1f8673147195"
 MacroTools = "1914dd2f-81c6-5fcd-8719-6d5c9610ff09"
 Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
 
 [compat]
-julia = "1"
+BSON = "0.3"
+Cassette = "0.3"
+MPI = "0.20"
+MacroTools = "0.5"
+julia = "1.8"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"

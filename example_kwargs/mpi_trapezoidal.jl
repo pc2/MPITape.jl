@@ -9,14 +9,14 @@ function get_arguments(rank, com_size)
         n = parse(Int, get(ARGS, 3, "100000"))
 
         for dest in 1:(com_size - 1)
-            MPI.Send(a, dest, 0, MPI.COMM_WORLD)
-            MPI.Send(b, dest, 0, MPI.COMM_WORLD)
-            MPI.Send(n, dest, 0, MPI.COMM_WORLD)
+            MPI.Send(a, MPI.COMM_WORLD; dest)
+            MPI.Send(b, MPI.COMM_WORLD; dest)
+            MPI.Send(n, MPI.COMM_WORLD; dest)
         end
     else
-        a, = MPI.Recv(Float64, 0, 0, MPI.COMM_WORLD)
-        b, = MPI.Recv(Float64, 0, 0, MPI.COMM_WORLD)
-        n, = MPI.Recv(Int, 0, 0, MPI.COMM_WORLD)
+        a, = MPI.Recv(Float64, MPI.COMM_WORLD; source = 0)
+        b, = MPI.Recv(Float64, MPI.COMM_WORLD; source = 0)
+        n, = MPI.Recv(Int, MPI.COMM_WORLD; source = 0)
     end
     return a, b, n
 end
@@ -56,12 +56,12 @@ function main()
 
     if rank != 0
         # Worker: send local result to master
-        MPI.Send(local_int, 0, 0, MPI.COMM_WORLD)
+        MPI.Send(local_int, MPI.COMM_WORLD; dest = 0)
     else
         # Master: add up results
         total_int = local_int
         for src in 1:(com_size - 1)
-            worker_int, = MPI.Recv(Float64, src, 0, MPI.COMM_WORLD)
+            worker_int, = MPI.Recv(Float64, MPI.COMM_WORLD; source = src)
             total_int += worker_int
         end
     end

@@ -1,45 +1,31 @@
-struct MPIEvent{F, I}
-    f::F        # function
-    args::I     # arguments or other extra information
-    t::Float64  # time
-    rank::Int64 # ranks
+struct MPIEvent{S, A, D}
+    rank::Int64    # ranks
+    f::S           # function
+    argtypes::A    # arguments or other extra information
+    args_subset::D # subset of argument values
+    t::Float64     # time
 end
-
-functype(mpievent::MPIEvent{F, I}) where {F, I} = F
 
 function Base.show(io::IO, ::MIME"text/plain", ev::MPIEvent)
     summary(io, ev)
     println(io)
     println(io, "├ Rank: ", ev.rank)
     println(io, "├ Function: ", ev.f)
-    println(io, "├ Args: ", isempty(ev.args) ? "none" : ev.args)
+    println(io, "├ Argument Types: ", ev.argtypes)
+    println(io, "├ Arguments (subset): ", isempty(ev.args_subset) ? "none" : ev.args_subset)
     print(io, "└ Time: ", ev.t)
 end
 
 function Base.show(io::IO, ev::MPIEvent)
-    print(io, "MPITape.MPIEvent($(ev.f), ..., $(ev.t), $(ev.rank))")
+    print(io, "MPITape.MPIEvent($(ev.rank), $(ev.f), ..., $(ev.t))")
 end
 
-getsrcdest(ev::MPIEvent) = getsrcdest(ev.f, ev)
-function getsrcdest(::Union{typeof(MPI.Send), typeof(MPI.send), typeof(MPI.Isend)},
-                    mpievent)
-    src = getrank()
-    dest = nothing
-    if mpievent.args isa Tuple
-        dest = mpievent.args[2]
-    elseif mpievent
-        dest = mpievent.args[:dest]
+function getsrcdest(ev::MPIEvent)
+    if isempty(ev.args_subset)
+        return nothing
     end
-    return (; src, dest)
-end
-function getsrcdest(::Union{typeof(MPI.Recv), typeof(MPI.Recv!)},
-                    mpievent)
-    dest = getrank()
-    src = nothing
-    if mpievent.args isa Tuple
-        src = mpievent.args[2]
-    elseif mpievent
-        src = mpievent.args[:dest]
+    if haskey(ev.args_subset, :src) && haskey(ev.args_subset, :dest)
+        return (; src = ev.args_subset[:src], dest = ev.args_subset[:dest])
     end
-    return (; src, dest)
+    return nothing
 end
