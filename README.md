@@ -12,7 +12,7 @@
 [cov-img]: https://codecov.io/gh/carstenbauer/MPITape.jl/branch/main/graph/badge.svg?token=Ze61CbGoO5
 [cov-url]: https://codecov.io/gh/carstenbauer/MPITape.jl
 
-[lifecycle-img]: https://img.shields.io/badge/lifecycle-stable-black.svg
+[lifecycle-img]: https://img.shields.io/badge/lifecycle-experimental-orange.svg
 
 [code-style-img]: https://img.shields.io/badge/code%20style-blue-4495d1.svg
 [code-style-url]: https://github.com/invenia/BlueStyle
