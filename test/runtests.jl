@@ -8,6 +8,8 @@ nprocs = clamp(Sys.CPU_THREADS, 2, 5)
 
 atexit(MPITape.cleanup) # rm tape files
 
+@testset "All Tests" begin
+# run all mpitest_* named files under MPI
 @testset "$f" for f in testfiles
     mpiexec() do mpirun
         function cmd(n = nprocs)
@@ -16,4 +18,4 @@ atexit(MPITape.cleanup) # rm tape files
         run(cmd())
         @test true
     end
-end
+end end
