@@ -6,7 +6,7 @@
 
 The package is not registered. You can use
 ```
-] add https://github.com/carstenbauer/MPITape.jl
+] add https://github.com/pc2/MPITape.jl
 ```
 to add the package to your Julia environment.
 
