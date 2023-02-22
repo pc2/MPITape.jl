@@ -24,13 +24,13 @@ makedocs(;
              ],
          ],
          # assets = ["assets/custom.css", "assets/custom.js"]
-         repo = "https://github.com/carstenbauer/MPITape.jl/blob/{commit}{path}#{line}",
+         repo = "https://github.com/pc2/MPITape.jl/blob/{commit}{path}#{line}",
          format = Documenter.HTML(; collapselevel = 1))
 
 if ci
     @info "Deploying documentation to GitHub"
     deploydocs(;
-               repo = "github.com/carstenbauer/MPITape.jl.git",
+               repo = "github.com/pc2/MPITape.jl.git",
                devbranch = "main",
                push_preview = true
                # target = "site",
