@@ -1,24 +1,24 @@
 # MPITape.jl
 
 [docs-dev-img]: https://img.shields.io/badge/docs-dev-blue.svg
-[docs-dev-url]: https://carstenbauer.github.io/MPITape.jl/dev
+[docs-dev-url]: https://pc2.github.io/MPITape.jl/dev
 
 [docs-stable-img]: https://img.shields.io/badge/docs-stable-blue.svg
-[docs-stable-url]: https://carstenbauer.github.io/MPITape.jl/stable
+[docs-stable-url]: https://pc2.github.io/MPITape.jl/stable
 
 [ci-img]: https://git.uni-paderborn.de/pc2-ci/julia/MPITape-jl/badges/main/pipeline.svg?key_text=CI@PC2
 [ci-url]: https://git.uni-paderborn.de/pc2-ci/julia/MPITape-jl/-/pipelines
 
-[cov-img]: https://codecov.io/gh/carstenbauer/MPITape.jl/branch/main/graph/badge.svg?token=Ze61CbGoO5
-[cov-url]: https://codecov.io/gh/carstenbauer/MPITape.jl
+[cov-img]: https://codecov.io/gh/pc2/MPITape.jl/branch/main/graph/badge.svg?token=Ze61CbGoO5
+[cov-url]: https://codecov.io/gh/pc2/MPITape.jl
 
 [lifecycle-img]: https://img.shields.io/badge/lifecycle-experimental-orange.svg
 
 [code-style-img]: https://img.shields.io/static/v1?label=code%20style&message=SciML&color=9558b2&labelColor=389826
 [code-style-url]: https://github.com/SciML/SciMLStyle
 
-[formatcheck-img]: https://github.com/carstenbauer/MPITape.jl/actions/workflows/FormatCheck.yml/badge.svg
-[formatcheck-url]: https://github.com/carstenbauer/MPITape.jl/actions/workflows/FormatCheck.yml
+[formatcheck-img]: https://github.com/pc2/MPITape.jl/actions/workflows/FormatCheck.yml/badge.svg
+[formatcheck-url]: https://github.com/pc2/MPITape.jl/actions/workflows/FormatCheck.yml
 
 <!--
 ![Lifecycle](https://img.shields.io/badge/lifecycle-maturing-blue.svg)
@@ -119,7 +119,7 @@ Rank: 4
 ```
 
 
-![](https://raw.githubusercontent.com/carstenbauer/MPITape.jl/main/example/colored_output_combined.png)
+![](https://raw.githubusercontent.com/pc2/MPITape.jl/main/example/colored_output_combined.png)
 
 ## Installation
 
@@ -131,7 +131,7 @@ to add the package to your Julia environment.
 
 ## Documentation
 
-For more information, please find the [documentation](https://carstenbauer.github.io/MPITape.jl/stable) here.
+For more information, please find the [documentation](https://pc2.github.io/MPITape.jl/stable) here.
 
 ## Acknowledgements
 
