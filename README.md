@@ -1,4 +1,38 @@
-# MPITape
+# MPITape.jl
+
+[docs-dev-img]: https://img.shields.io/badge/docs-dev-blue.svg
+[docs-dev-url]: https://carstenbauer.github.io/MPITape.jl/dev
+
+[docs-stable-img]: https://img.shields.io/badge/docs-stable-blue.svg
+[docs-stable-url]: https://carstenbauer.github.io/MPITape.jl/stable
+
+[ci-img]: https://git.uni-paderborn.de/pc2-ci/julia/MPITape-jl/badges/main/pipeline.svg?key_text=CI@PC2
+[ci-url]: https://git.uni-paderborn.de/pc2-ci/julia/MPITape-jl/-/pipelines
+
+[cov-img]: https://codecov.io/gh/carstenbauer/MPITape.jl/branch/main/graph/badge.svg?token=Ze61CbGoO5
+[cov-url]: https://codecov.io/gh/carstenbauer/MPITape.jl
+
+[lifecycle-img]: https://img.shields.io/badge/lifecycle-stable-black.svg
+
+[code-style-img]: https://img.shields.io/badge/code%20style-blue-4495d1.svg
+[code-style-url]: https://github.com/invenia/BlueStyle
+
+<!--
+![Lifecycle](https://img.shields.io/badge/lifecycle-maturing-blue.svg)
+![Lifecycle](https://img.shields.io/badge/lifecycle-stable-green.svg)
+![Lifecycle](https://img.shields.io/badge/lifecycle-retired-orange.svg)
+![Lifecycle](https://img.shields.io/badge/lifecycle-archived-red.svg)
+![Lifecycle](https://img.shields.io/badge/lifecycle-dormant-blue.svg)
+![Lifecycle](https://img.shields.io/badge/lifecycle-experimental-orange.svg)
+-->
+
+*Record MPI Operations on Tape*
+
+| **Documentation**                                                               | **Build Status**                                                                                |  **Quality**                                                                                |
+|:-------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------------:|
+| [![][docs-stable-img]][docs-stable-url] [![][docs-dev-img]][docs-dev-url] | [![][ci-img]][ci-url] [![][cov-img]][cov-url] | ![][lifecycle-img] [![SciML Code Style](https://img.shields.io/static/v1?label=code%20style&message=SciML&color=9558b2&labelColor=389826)](https://github.com/SciML/SciMLStyle) |
+
+## Quick Demo
 
 ```julia
 using MPI
@@ -83,3 +117,19 @@ Rank: 4
 
 
 ![](https://raw.githubusercontent.com/carstenbauer/MPITape.jl/main/example/colored_output_combined.png)
+
+## Installation
+
+The package is not registered. You can use
+```
+] add MPITape
+```
+to add the package to your Julia environment.
+
+## Documentation
+
+For more information, please find the [documentation](https://carstenbauer.github.io/MPITape.jl/stable) here.
+
+## Acknowledgements
+
+This package is an effort of the [Paderborn Center for Parallel Computing (PC²)](https://pc2.uni-paderborn.de/), a national HPC center in Germany.
