@@ -14,8 +14,11 @@
 
 [lifecycle-img]: https://img.shields.io/badge/lifecycle-experimental-orange.svg
 
-[code-style-img]: https://img.shields.io/badge/code%20style-blue-4495d1.svg
-[code-style-url]: https://github.com/invenia/BlueStyle
+[code-style-img]: https://img.shields.io/static/v1?label=code%20style&message=SciML&color=9558b2&labelColor=389826
+[code-style-url]: https://github.com/SciML/SciMLStyle
+
+[formatcheck-img]: https://github.com/carstenbauer/MPITape.jl/actions/workflows/FormatCheck.yml/badge.svg
+[formatcheck-url]: https://github.com/carstenbauer/MPITape.jl/actions/workflows/FormatCheck.yml
 
 <!--
 ![Lifecycle](https://img.shields.io/badge/lifecycle-maturing-blue.svg)
@@ -30,7 +33,7 @@
 
 | **Documentation**                                                               | **Build Status**                                                                                |  **Quality**                                                                                |
 |:-------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------------:|:-----------------------------------------------------------------------------------------------:|
-| [![][docs-stable-img]][docs-stable-url] [![][docs-dev-img]][docs-dev-url] | [![][ci-img]][ci-url] [![][cov-img]][cov-url] | ![][lifecycle-img] [![SciML Code Style](https://img.shields.io/static/v1?label=code%20style&message=SciML&color=9558b2&labelColor=389826)](https://github.com/SciML/SciMLStyle) |
+| [![][docs-stable-img]][docs-stable-url] [![][docs-dev-img]][docs-dev-url] | [![][ci-img]][ci-url] [![][cov-img]][cov-url] | ![][lifecycle-img] [![](formatcheck-img)][formatcheck-url] [![](code-style-img)][code-style-url] |
 
 ## Quick Demo
 
