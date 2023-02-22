@@ -32,7 +32,7 @@ if ci
     deploydocs(;
                repo = "github.com/carstenbauer/MPITape.jl.git",
                devbranch = "main",
-               push_preview=true,
+               push_preview = true
                # target = "site",
                )
 end
