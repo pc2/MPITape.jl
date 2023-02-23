@@ -13,7 +13,7 @@ atexit(MPITape.cleanup) # rm tape files
     @testset "$f" for f in testfiles
         mpiexec() do mpirun
             function cmd(n = nprocs)
-                `$mpirun -n $n $(Base.julia_cmd()) --startup-file=no $(joinpath(testdir, f))`
+                `$mpirun -n $n --oversubscribe $(Base.julia_cmd()) --startup-file=no $(joinpath(testdir, f))`
             end
             run(cmd())
             @test true
