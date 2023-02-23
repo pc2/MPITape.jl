@@ -1,6 +1,9 @@
-using MPITape
+include("mpifix.jl")
+@show LOAD_PATH
 using MPI
+using MPITape
 using Test
+@show MPI.identify_implementation()
 
 testdir = @__DIR__
 testfiles = sort(filter(startswith("mpitest_"), readdir(testdir)))
