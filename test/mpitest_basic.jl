@@ -1,4 +1,3 @@
-include("mpifix.jl")
 using MPITape
 using MPI
 using Test

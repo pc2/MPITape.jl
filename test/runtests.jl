@@ -1,8 +1,7 @@
-include("mpifix.jl")
-@show LOAD_PATH
 using MPI
 using MPITape
 using Test
+@show LOAD_PATH
 @show MPI.identify_implementation()
 
 testdir = @__DIR__
