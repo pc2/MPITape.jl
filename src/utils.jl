@@ -6,6 +6,14 @@ function getrank(; comm = MPI.COMM_WORLD)
     return MYRANK[]
 end
 
+function getcommsize(; comm = MPI.COMM_WORLD)
+    if GLOBAL_COMM_SIZE[] == -1 # first time we run this
+        mpi_maybeinit()
+        GLOBAL_COMM_SIZE[] = MPI.Comm_size(comm)
+    end
+    return GLOBAL_COMM_SIZE[]
+end
+
 function mpi_maybeinit()
     MPI.Initialized() || MPI.Init()
     return nothing
