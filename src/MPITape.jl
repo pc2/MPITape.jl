@@ -4,7 +4,7 @@ using MPI
 using Cassette
 using MacroTools
 using Printf
-import BSON
+using Serialization
 using DocStringExtensions
 
 Cassette.@context MPITapeCtx

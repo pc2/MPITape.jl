@@ -1,15 +1,15 @@
-default_fprefix() = "tape_rank"
+default_fprefix() = "rank"
 default_fname() = default_fprefix() * string(getrank())
-default_fext() = ".bson"
+default_fext() = ".tape"
 default_fname_full() = default_fname() * default_fext()
 
 function save(fname = default_fname_full())
-    BSON.bson(fname, Dict(:tape => unsafe_gettape()))
+    serialize(fname, unsafe_gettape())
     return nothing
 end
 
 function read(fname = default_fname_full())
-    tape_from_file = BSON.load(fname)[:tape]
+    tape_from_file = deserialize(fname)
     return tape_from_file
 end
 

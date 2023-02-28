@@ -23,3 +23,13 @@ function mpi_check_not_finalized()
     !MPI.Finalized() || error("MPI already finalized.")
     return nothing
 end
+
+"""
+Delete all tape files in the current directory.
+"""
+function cleanup()
+    for f in filter(x -> startswith(x, default_fprefix()) && endswith(x, default_fext()),
+                    readdir())
+        isfile(f) && rm(f)
+    end
+end
