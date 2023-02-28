@@ -1,5 +1,6 @@
 using MPITape
 using MPI
+using Kroki
 using Test
 
 MPI.Init()
@@ -28,6 +29,8 @@ tape_merged = MPITape.merge()
 if rank == 0 # Master
     @test typeof(tape_merged) == Vector{MPITape.MPIEvent}
     @test isnothing(MPITape.print_merged(tape_merged))
+    @test typeof(MPITape.plot_sequence_merged(tape_merged)) == Kroki.Diagram
+    @test isnothing(MPITape.plot_merged(tape_merged))
 else
     @test isnothing(tape_merged)
 end
