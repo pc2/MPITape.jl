@@ -1,7 +1,7 @@
 
 function _srcdest_to_rankarray(srcdest)
     if srcdest in ["all", "each", "some"]
-        return collect(0:getcommsize()-1)
+        return collect(0:(getcommsize() - 1))
     end
     if typeof(srcdest) <: Integer
         return [srcdest]
@@ -36,7 +36,7 @@ function MPIEventNeighbors(ev::MPIEvent)
     end
     if length(opendests) == 1 && (opendests[1] in opensrcs)
         deleteat!(opensrcs, findfirst(isequal(opendests[1]), opensrcs))
-    end 
+    end
     # remove other ranks on own communication side
     if ev.rank in opendests
         opendests = [ev.rank]
@@ -52,7 +52,7 @@ $(SIGNATURES)
 Generates the edges of a directed communication graph, where the edges represent 
 communication between two MPIEvents.
 """
-function get_edges(tape::Array{MPIEvent}; check=true)
+function get_edges(tape::Array{MPIEvent}; check = true)
     # Data structure containing communication edges
     edges = Tuple{MPIEvent, MPIEvent}[]
     # temporary data to keep track of left communication pairs
@@ -75,27 +75,29 @@ function get_edges(tape::Array{MPIEvent}; check=true)
                     verbose() && println("Check: $recvevent")
                     # identify receive call and matching signature
                     if d == recvevent.rank &&
-                            any(e.rank == s for s in l_recv.open_srcs) &&
-                            gettag(e) == gettag(recvevent)
+                       any(e.rank == s for s in l_recv.open_srcs) &&
+                       gettag(e) == gettag(recvevent)
                         verbose() && println("Matched $(e) and $(recvevent)")
-                        deleteat!(l_recv.open_srcs,findfirst(x->x==e.rank, l_recv.open_srcs))
+                        deleteat!(l_recv.open_srcs,
+                                  findfirst(x -> x == e.rank, l_recv.open_srcs))
                         push!(found_dsts, d)
                         push!(edges, (e, recvevent))
                         break
                     end
                 end
             end
-            deleteat!(l.open_dst,findall(x->any(x==d for d in found_dsts), l.open_dst))
+            deleteat!(l.open_dst, findall(x -> any(x == d for d in found_dsts), l.open_dst))
             # check for errors in graph
             if !isempty(l.open_dst)
                 check && error("Not all destinations found for $(e): $(l.open_dst)")
             end
-            deleteat!(l.open_srcs,findfirst(x->x==e.rank, l.open_srcs))
+            deleteat!(l.open_srcs, findfirst(x -> x == e.rank, l.open_srcs))
         end
     end
     for (ol, e) in zip(open_links, tape)
         if !isempty(ol.open_srcs)
-            check && error("Not all transmissions are linked correctly: Sources left: $(ol.open_srcs) $(e)")
+            check &&
+                error("Not all transmissions are linked correctly: Sources left: $(ol.open_srcs) $(e)")
         end
     end
     return edges

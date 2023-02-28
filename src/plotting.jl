@@ -3,29 +3,33 @@ using Kroki
 
 function _plot_edges(edges::Array{Tuple{MPIEvent, MPIEvent}})
     for (src, dst) in edges
-        plot!([src.t_end,dst.t_end], [src.rank, dst.rank], arrow=true, color=:black, label="")
+        plot!([src.t_end, dst.t_end], [src.rank, dst.rank], arrow = true, color = :black,
+              label = "")
     end
 end
 
-function _event_to_rect(ev::MPIEvent; color=:blue)
-    plot!(Shape([ev.t_start, ev.t_end, ev.t_end, ev.t_start], 
-            [ev.rank - 0.25, ev.rank - 0.25, ev.rank + 0.25, ev.rank + 0.25]), color=color,
-            label="")
+function _event_to_rect(ev::MPIEvent; color = :blue)
+    plot!(Shape([ev.t_start, ev.t_end, ev.t_end, ev.t_start],
+                [ev.rank - 0.25, ev.rank - 0.25, ev.rank + 0.25, ev.rank + 0.25]),
+          color = color,
+          label = "")
 end
 
 """
 $(SIGNATURES)
-Plots a gannt chart of the recorded MPI API calls and store it to a file.
+Plots a gantt chart of the recorded MPI API calls and store it to a file.
 Additionally draws arrows between communicating MPIEvents.
 """
-function plot_merged(tape::Array{MPIEvent}; palette=palette(:Accent_8), fname="gantt.png")
+function plot_merged(tape::Array{MPIEvent}; palette = palette(:Accent_8),
+                     fname = "gantt.png")
     plot()
     unique_calls = unique([ev.f for ev in tape])
     for mpievent in tape
-        _event_to_rect(mpievent, color=palette[findall(x->x==mpievent.f, unique_calls)[1]])
+        _event_to_rect(mpievent,
+                       color = palette[findall(x -> x == mpievent.f, unique_calls)[1]])
     end
     for (col, call) in zip(palette[1:length(unique_calls)], unique_calls)
-        plot!(Shape([0],[0]), color=col, label=string(call))
+        plot!(Shape([0], [0]), color = col, label = string(call))
     end
     edges = get_edges(tape)
     _plot_edges(edges)
@@ -51,4 +55,4 @@ Plot a sequence diagram of the communication between ranks.
 function plot_sequence_merged(tape)
     edges = get_edges(tape)
     return plantuml"$(_generate_plantuml(edges))"
-end   
+end

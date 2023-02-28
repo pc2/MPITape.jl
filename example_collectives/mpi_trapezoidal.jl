@@ -81,7 +81,7 @@ tape_merged = MPITape.merge()
 if rank == 0 # Master
     MPITape.print_merged(tape_merged)
     display(MPITape.plot_sequence_merged(tape_merged))
-    MPITape.plot_merged(tape_merged) 
+    MPITape.plot_merged(tape_merged)
 end
 
 # MPITape.save()

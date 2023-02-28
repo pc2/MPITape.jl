@@ -84,12 +84,12 @@ for (mpifunc, srcdest) in MPIFunctions
                  start_time = MPI.Wtime() - TIME_START[]
                  ret = f(args...)
                  push!(TAPE,
-                    MPIEvent(rank,
-                          string(f),
-                          argtypes,
-                          argvals,
-                          start_time,
-                          MPI.Wtime() - TIME_START[]))
+                       MPIEvent(rank,
+                                string(f),
+                                argtypes,
+                                argvals,
+                                start_time,
+                                MPI.Wtime() - TIME_START[]))
                  return ret
              end
          end)
