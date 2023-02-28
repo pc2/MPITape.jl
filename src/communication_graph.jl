@@ -1,5 +1,5 @@
 
-function srcdest_to_rankarray(srcdest)
+function _srcdest_to_rankarray(srcdest)
     if srcdest in ["all", "each", "some"]
         return collect(0:getcommsize()-1)
     end
@@ -17,13 +17,19 @@ struct MPIEventNeighbors
     open_dst::Vector{Int}
 end
 
+"""
+$(SIGNATURES)
+Creates a MPIEventNeighbors from an MPIEvent.
+This struct is used to keep trakc of the communication pairs for each event
+while constructing the edges of the communication graph.
+"""
 function MPIEventNeighbors(ev::MPIEvent)
     srcdest = getsrcdest(ev)
     if isnothing(srcdest)
         srcdest = (src = nothing, dest = nothing)
     end
-    opensrcs = srcdest_to_rankarray(srcdest[:src])
-    opendests = srcdest_to_rankarray(srcdest[:dest])
+    opensrcs = _srcdest_to_rankarray(srcdest[:src])
+    opendests = _srcdest_to_rankarray(srcdest[:dest])
     # Delete rank from recvs or sends it if is root!
     if length(opensrcs) == 1 && (opensrcs[1] in opendests)
         deleteat!(opendests, findfirst(isequal(opensrcs[1]), opendests))
@@ -41,6 +47,11 @@ function MPIEventNeighbors(ev::MPIEvent)
     MPIEventNeighbors(opensrcs, opendests)
 end
 
+"""
+$(SIGNATURES)
+Generates the edges of a directed communication graph, where the edges represent 
+communication between two MPIEvents.
+"""
 function get_edges(tape::Array{MPIEvent}; check=true)
     # Data structure containing communication edges
     edges = Tuple{MPIEvent, MPIEvent}[]
