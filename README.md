@@ -9,7 +9,8 @@
 [ci-img]: https://git.uni-paderborn.de/pc2-ci/julia/MPITape-jl/badges/main/pipeline.svg?key_text=CI@PC2
 [ci-url]: https://git.uni-paderborn.de/pc2-ci/julia/MPITape-jl/-/pipelines
 
-[cov-img]: https://codecov.io/gh/pc2/MPITape.jl/branch/main/graph/badge.svg?token=Ze61CbGoO5
+<!-- [cov-img]: https://codecov.io/gh/pc2/MPITape.jl/branch/main/graph/badge.svg?token=Ze61CbGoO5 -->
+[cov-img]: https://codecov.io/gh/pc2/MPITape.jl/branch/main/graph/badge.svg?token=9x4JGFEzzu
 [cov-url]: https://codecov.io/gh/pc2/MPITape.jl
 
 [lifecycle-img]: https://img.shields.io/badge/lifecycle-experimental-orange.svg
