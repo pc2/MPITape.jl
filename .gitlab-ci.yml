@@ -4,6 +4,9 @@ stages:
 variables:
   SCHEDULER_PARAMETERS: "-N 1 -n 1 -c 40 -t 00:15:00 -A pc2-mitarbeiter -p all --exclusive"
   JULIA_DEPOT_PATH: "/scratch/pc2-mitarbeiter/bauerc/.julia-ci"
+  JULIA_NUM_THREADS: "1"
+  JULIA_1_8: "lang/JuliaHPC/1.8.5-foss-2022a-CUDA-11.7.0"
+  JULIA_1_9: "lang/JuliaHPC/1.9.0-beta4-foss-2022a-CUDA-11.7.0"
 default:
   tags:
     - bauerc-noctua
@@ -16,7 +19,7 @@ julia/1.8:
     - when: on_success
   script:
     - /bin/bash -l
-    - module load lang/JuliaHPC/1.8.3-foss-2022a-CUDA-11.7.0
+    - module load $JULIA_1_8
     - julia --color=yes --project=. -e 'using Pkg; Pkg.build(verbose=true); Pkg.test(; coverage = true);'
     - julia --color=yes --project=test/coverage -e 'import Pkg; Pkg.instantiate()'
     - julia --color=yes --project=test/coverage test/coverage/coverage.jl
@@ -29,8 +32,8 @@ julia/1.9:
     - when: on_success
   script:
     - /bin/bash -l
-    - export PATH=$HOME/.juliaup/bin:$PATH
-    - julia +1.9 --color=yes --project=. -e 'using Pkg; Pkg.build(verbose=true); Pkg.test(; coverage = false);'
+    - module load $JULIA_1_9
+    - julia --color=yes --project=. -e 'using Pkg; Pkg.build(verbose=true); Pkg.test(; coverage = false);'
   allow_failure: true
 
 # Documentation
@@ -43,7 +46,7 @@ build-and-deploy:
     - external_pull_requests
   script:
     - /bin/bash -l
-    - module load lang/JuliaHPC/1.8.3-foss-2022a-CUDA-11.7.0
+    - module load $JULIA_1_8
     - cd docs
     - julia --color=yes build_docs.jl
   allow_failure: false
