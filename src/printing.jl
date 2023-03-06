@@ -58,8 +58,7 @@ end
 """
 $(SIGNATURES)
 Prints the given tape with the assumption that it contains events from multiple MPI ranks.
-Typically, the input should be the result of `MPITape.merge()`,
-`MPITape.readall_and_merge()`, or similar.
+Typically, the input should be the result of `MPITape.readll_and_merge()` or similar.
 """
 function print_merged(tape; color = true)
     nranks = length(unique(ev.rank for ev in tape))

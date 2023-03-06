@@ -80,19 +80,21 @@ end
 @record main() # actual recording
 
 rank = MPI.Comm_rank(MPI.COMM_WORLD)
-sleep(rank) # delayed printing
+
+# delayed printing
+sleep(rank)
 MPITape.print_mytape()
 
-tape_merged = MPITape.merge()
-if rank == 0 # Master
+# save local tapes to disk
+MPITape.save()
+
+MPI.Barrier(MPI.COMM_WORLD)
+if rank == 0 # on master
+    # read all tapes and merge them into one
+    tape_merged = MPITape.readall_and_merge()
+    # print the merged tape
     MPITape.print_merged(tape_merged)
+    # plot the merged tape
     display(MPITape.plot_sequence_merged(tape_merged))
     MPITape.plot_merged(tape_merged)
 end
-
-# MPITape.save()
-# MPI.Barrier(MPI.COMM_WORLD)
-# if rank == 0 # Master
-#     tape_combined = MPITape.read_combine()
-#     MPITape.print_combined(tape_combined)
-# end
