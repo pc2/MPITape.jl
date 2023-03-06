@@ -24,12 +24,11 @@ end
 
 @test isnothing(@record basic_communication())
 @test isnothing(MPITape.print_mytape())
-tape_merged = MPITape.merge()
+@test isnothing(MPITape.save())
 if rank == 0 # Master
+    tape_merged = MPITape.readall_and_merge()
     @test typeof(tape_merged) == Vector{MPITape.MPIEvent}
     @test isnothing(MPITape.print_merged(tape_merged))
     @test typeof(MPITape.plot_sequence_merged(tape_merged)) == Kroki.Diagram
     @test isnothing(MPITape.plot_merged(tape_merged))
-else
-    @test isnothing(tape_merged)
 end

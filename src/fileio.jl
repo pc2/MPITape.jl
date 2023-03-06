@@ -34,18 +34,6 @@ function readall_and_merge(dir = pwd(); prefix = default_fprefix())
     return tape_merged
 end
 
-"""
-To be called on all MPI ranks. Saves all tapes to disk and then reads and merges them on
-the master (rank 0). Returns the merged tape on the master and `nothing` on all other ranks.
-"""
-function merge()
-    save()
-    MPI.Barrier(MPI.COMM_WORLD)
-    tape_merged = getrank() == 0 ? readall_and_merge() : nothing
-    MPI.Barrier(MPI.COMM_WORLD)
-    return tape_merged
-end
-
 # # Attempt to reduce tapes to master
 # # (Doesn't work though because tape isn't isbitstype...)
 # function merge()
