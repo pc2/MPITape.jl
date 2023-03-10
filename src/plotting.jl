@@ -18,7 +18,9 @@ end
 """
 $(SIGNATURES)
 Plots a gantt chart of the recorded MPI API calls and store it to a file.
-Additionally draws arrows between communicating MPIEvents.
+Additionally draws arrows between communicating `MPIEvent`s.
+
+
 """
 function plot_merged(tape::Array{MPIEvent}; palette = palette(:Accent_8),
                      fname = "gantt.png")
@@ -50,7 +52,39 @@ end
 
 """
 $(SIGNATURES)
-Plot a sequence diagram of the communication between ranks.
+Plot a sequence diagram of the communication between ranks using the communication graph created by `get_edges`.
+
+Creates a plot of the following form using Kroki.jl:
+
+┌──────┐          ┌──────┐          ┌──────┐          ┌──────┐          ┌──────┐
+│Rank_0│          │Rank_1│          │Rank_2│          │Rank_3│          │Rank_4│
+└──┬───┘          └──┬───┘          └──┬───┘          └──┬───┘          └──┬───┘
+   │     MPI_Send    │                 │                 │                 │    
+   │ ────────────────>                 │                 │                 │    
+   │                 │                 │                 │                 │      
+   │              MPI_Send             │                 │                 │    
+   │ ──────────────────────────────────>                 │                 │    
+   │                 │                 │                 │                 │    
+   │                 │     MPI_Send    │                 │                 │    
+   │ ────────────────────────────────────────────────────>                 │                
+   │                 │                 │                 │                 │    
+   │                 │              MPI_Send             │                 │    
+   │ ──────────────────────────────────────────────────────────────────────>       
+   │                 │                 │                 │                 │    
+   │     MPI_Send    │                 │                 │                 │    
+   │ <────────────────                 │                 │                 │    
+   │                 │                 │                 │                 │    
+   │              MPI_Send             │                 │                 │    
+   │ <──────────────────────────────────                 │                 │    
+   │                 │                 │                 │                 │    
+   │                 │     MPI_Send    │                 │                 │    
+   │ <────────────────────────────────────────────────────                 │    
+   │                 │                 │                 │                 │    
+   │                 │              MPI_Send             │                 │    
+   │ <──────────────────────────────────────────────────────────────────────    
+┌──┴───┐          ┌──┴───┐          ┌──┴───┐          ┌──┴───┐          ┌──┴───┐
+│Rank_0│          │Rank_1│          │Rank_2│          │Rank_3│          │Rank_4│
+└──────┘          └──────┘          └──────┘          └──────┘          └──────┘
 """
 function plot_sequence_merged(tape)
     edges = get_edges(tape)
