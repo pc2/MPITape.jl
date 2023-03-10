@@ -11,9 +11,9 @@ Cassette.@context MPITapeCtx
 
 include("utils.jl")
 include("mpievent.jl")
+include("api.jl")
 include("mpifuncs_overdubbing.jl")
 include("printing.jl")
-include("api.jl")
 include("fileio.jl")
 include("communication_graph.jl")
 include("plotting.jl")

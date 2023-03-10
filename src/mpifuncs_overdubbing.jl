@@ -76,21 +76,27 @@ for (mpifunc, srcdest) in MPIFunctions
     end
 
     eval(quote
-             function Cassette.overdub(ctx::MPITapeCtx, f::typeof($mpifunc), args...)
+             function Cassette.prehook(ctx::MPITapeCtx{MPIEventTrace},
+                                       f::typeof($mpifunc), args...)
+                 verbose() && println("PREHOOK: ", f, args)
+                 ctx.metadata.start_time = MPI.Wtime() - TIME_START[]
+             end
+
+             function Cassette.posthook(ctx::MPITapeCtx{MPIEventTrace}, _,
+                                        f::typeof($mpifunc),
+                                        args...)
                  rank = getrank()
                  argtypes = typeof.(args)
                  $args_quote
-                 verbose() && println("OVERDUBBING: ", f, argtypes)
-                 start_time = MPI.Wtime() - TIME_START[]
-                 ret = f(args...)
+                 verbose() && println("POSTHOOK: ", f, argtypes)
                  push!(TAPE,
                        MPIEvent(rank,
                                 string(f),
                                 argtypes,
                                 argvals,
-                                start_time,
+                                ctx.metadata.start_time,
                                 MPI.Wtime() - TIME_START[]))
-                 return ret
+                 return nothing
              end
          end)
 end

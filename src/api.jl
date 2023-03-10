@@ -9,12 +9,21 @@ end
 
 reset() = empty!(unsafe_gettape())
 
+"""
+Holding data that is required to be exchanged between `prehook` and `posthook` 
+(i.e. the start time of the call)
+"""
+mutable struct MPIEventTrace
+    start_time::Float64
+    MPIEventTrace() = new(0.0)
+end
+
 function record(f, args...)
     MPITape.reset()
     mpi_maybeinit()
     MPI.Barrier(MPI.COMM_WORLD)
     TIME_START[] = MPI.Wtime()
-    result = Cassette.overdub(MPITapeCtx(), f, args...)
+    result = Cassette.overdub(MPITapeCtx(metadata = MPIEventTrace()), f, args...)
     return result
 end
 
