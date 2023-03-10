@@ -28,6 +28,7 @@ end
 if rank == 0 # Master
     tape_merged = MPITape.readall_and_merge()
     @test typeof(tape_merged) == Vector{MPITape.MPIEvent}
+    @test length(tape_merged) > 0
     @test isnothing(MPITape.print_merged(tape_merged))
     @test typeof(MPITape.plot_sequence_merged(tape_merged)) == Kroki.Diagram
     @test isnothing(MPITape.plot_merged(tape_merged))
