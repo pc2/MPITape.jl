@@ -50,7 +50,14 @@ end
 """
 $(SIGNATURES)
 Generates the edges of a directed communication graph, where the edges represent 
-communication between two MPIEvents.
+communication between two `MPIEvent`s.
+
+The method returns an Array of `Tuple{MPIEvent, MPIEvent}`. Every tuple directed edge between MPI calls that exchanged data.
+In consequence, a MPI_Send call and its matching MPI_Recv call will result in a single edge in the graph whereas a MPI_Bcast
+over `n` ranks will lead to `n - 1` edges since the root will exchange data with all other ranks.
+
+The methods checks for completeness of the created graph and throws an error, if not all MPI calls can be matched.
+Setting `check = false` will skip these tests.
 """
 function get_edges(tape::Array{MPIEvent}; check = true)
     # Data structure containing communication edges
