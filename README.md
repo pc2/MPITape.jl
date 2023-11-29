@@ -1,4 +1,5 @@
-<img src="docs/src/assets/logo-dark.svg" width=150>
+<!-- <img src="docs/src/assets/logo-dark.svg" width=150> !-->
+<img src="docs/src/assets/mpitape.gif" width=150>
 
 # MPITape.jl
 
