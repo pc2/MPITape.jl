@@ -1,3 +1,5 @@
+<img src="docs/src/assets/logo-dark.svg" width=150>
+
 # MPITape.jl
 
 [docs-dev-img]: https://img.shields.io/badge/docs-dev-blue.svg
